@@ -1,1 +1,43 @@
-mod tests;
+#[macro_use]
+extern crate diesel;
+extern crate dotenv;
+
+pub mod schema;
+pub mod models;
+
+use diesel::prelude::*;
+use diesel::sqlite::SqliteConnection;
+use dotenv::dotenv;
+use std::env;
+use chrono::Utc;
+use uuid::Uuid;
+
+use crate::models::NewEntry;
+
+pub fn establish_connection() -> SqliteConnection {
+    dotenv().ok();
+
+    let database_url = env::var("DATABASE_URL")
+        .expect("DATABASE_URL must be set");
+    SqliteConnection::establish(&database_url)
+        .expect(&format!("Error connection to {}", database_url))
+}
+
+pub fn create_entry<'a>(conn: &SqliteConnection, title: &'a str, body: &'a str) -> Uuid {
+    use schema::entries;
+
+    let entry_id = Uuid::new_v4();
+    let new_entry = NewEntry {
+        title,
+        body,
+        timestamp: &Utc::now().naive_utc(),
+        entry_id: &entry_id.to_string()
+    };
+
+    diesel::insert_into(entries::table)
+        .values(&new_entry)
+        .execute(conn)
+        .expect("Error saving a new entry");
+
+    entry_id
+}
