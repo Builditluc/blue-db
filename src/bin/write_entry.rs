@@ -16,7 +16,7 @@ fn main() {
     stdin().read_to_string(&mut body).unwrap();
 
     let entry = create_entry(&connection, title, &body);
-    println!("\nSaved entry {} with id {}", title, entry);
+    println!("\nSaved entry {} with id {}", title, entry.entry_id);
 }
 
 #[cfg(not(windows))]

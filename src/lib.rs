@@ -12,6 +12,7 @@ use std::env;
 use chrono::Utc;
 use uuid::Uuid;
 
+use crate::models::Entry;
 use crate::models::NewEntry;
 
 pub fn establish_connection() -> PgConnection {
@@ -23,21 +24,18 @@ pub fn establish_connection() -> PgConnection {
         .expect(&format!("Error connection to {}", database_url))
 }
 
-pub fn create_entry<'a>(conn: &PgConnection, title: &'a str, body: &'a str) -> Uuid {
+pub fn create_entry<'a>(conn: &PgConnection, title: &'a str, body: &'a str) -> Entry {
     use schema::entries;
 
-    let entry_id = Uuid::new_v4();
     let new_entry = NewEntry {
         title,
         body,
         timestamp: &Utc::now().naive_utc(),
-        entry_id: &entry_id.to_string()
+        entry_id: &Uuid::new_v4().to_string()
     };
 
     diesel::insert_into(entries::table)
         .values(&new_entry)
-        .execute(conn)
-        .expect("Error saving a new entry");
-
-    entry_id
+        .get_result(conn)
+        .expect("Error saving a new entry")
 }
