@@ -6,7 +6,7 @@ pub mod schema;
 pub mod models;
 
 use diesel::prelude::*;
-use diesel::sqlite::SqliteConnection;
+use diesel::pg::PgConnection;
 use dotenv::dotenv;
 use std::env;
 use chrono::Utc;
@@ -14,16 +14,16 @@ use uuid::Uuid;
 
 use crate::models::NewEntry;
 
-pub fn establish_connection() -> SqliteConnection {
+pub fn establish_connection() -> PgConnection {
     dotenv().ok();
 
     let database_url = env::var("DATABASE_URL")
         .expect("DATABASE_URL must be set");
-    SqliteConnection::establish(&database_url)
+    PgConnection::establish(&database_url)
         .expect(&format!("Error connection to {}", database_url))
 }
 
-pub fn create_entry<'a>(conn: &SqliteConnection, title: &'a str, body: &'a str) -> Uuid {
+pub fn create_entry<'a>(conn: &PgConnection, title: &'a str, body: &'a str) -> Uuid {
     use schema::entries;
 
     let entry_id = Uuid::new_v4();
