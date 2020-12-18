@@ -16,7 +16,7 @@ fn main() {
 
     println!("Displaying {} entries", results.len());
     for entry in results {
-        println!("{}, created {} UTC", entry.title, entry.timestamp.to_string());
+        println!("{}, created {} UTC", entry.title, entry.created_at.to_string());
         println!("----------\n");
         println!("{}", entry.body);
     }

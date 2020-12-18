@@ -1,12 +1,13 @@
+#[allow(dead_code)]
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
 
 pub mod schema;
+pub mod blue;
 pub mod models;
 
 use diesel::prelude::*;
-use diesel::pg::PgConnection;
 use dotenv::dotenv;
 use std::env;
 use chrono::Utc;
@@ -28,10 +29,12 @@ pub fn create_entry<'a>(conn: &PgConnection, title: &'a str, body: &'a str) -> E
     use schema::entries;
 
     let new_entry = NewEntry {
+        entry_id: &Uuid::new_v4().to_string(),
         title,
         body,
-        timestamp: &Utc::now().naive_utc(),
-        entry_id: &Uuid::new_v4().to_string()
+
+        created_at: &Utc::now().naive_utc(),
+        updated_at: &Utc::now().naive_utc()
     };
 
     diesel::insert_into(entries::table)
