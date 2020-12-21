@@ -1,19 +1,33 @@
+use crate::models::entry::Entry;
+use crate::models::entry::NewEntry;
+
+use crate::models::category::Category;
+use crate::models::category::NewCategory;
+
+use crate::schema::entries;
+
 use diesel::prelude::*;
-use dotenv::dotenv;
-use std::env;
-use uuid::Uuid;
+use diesel::dsl::*;
+use diesel::pg::Pg;
+
 use chrono::Utc;
-
-use crate::establish_connection;
-
-use crate::models::Entry;
-use crate::models::NewEntry;
+use uuid::Uuid;
 
 pub struct Blue {
+    conn: PgConnection
 }
 
 impl Blue {
+    pub fn new() -> Self {
+        Blue {
+            conn: Blue::establish_connection()
+        }
+    }
+
     fn establish_connection() -> PgConnection {
+        use dotenv::dotenv;
+        use std::env;
+
         dotenv().ok();
 
         let database_url = env::var("DATABASE_URL")
@@ -24,13 +38,12 @@ impl Blue {
 }
 
 impl Blue {
-    fn create_entry<'a>(title: &'a str, body: &'a str) -> Entry {
+    pub fn create_entry<'a>(&self,  title: &'a str, body: &'a str, category_id: &'a str) -> Entry {
         use crate::schema::entries;
-
-        let conn = &establish_connection();
 
         let new_entry = NewEntry {
             entry_id: &Uuid::new_v4().to_string(),
+            category_id,
             title,
             body,
             created_at: &Utc::now().naive_utc(),
@@ -39,14 +52,16 @@ impl Blue {
 
         diesel::insert_into(entries::table)
             .values(&new_entry)
-            .get_result(conn)
+            .get_result(&self.conn)
             .expect("Error saving a new entry")
-    }
-
-    /*fn delete_entry() -> usize {
 
     }
 
+    pub fn delete_entry(&self, ) -> usize {
+        1
+    }
+
+    /*
     fn create_category() -> Category {
 
     }

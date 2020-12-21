@@ -1,7 +1,7 @@
 table! {
     categories (id) {
-        id -> Int4,
-        title -> Text,
+        id -> Text,
+        title -> Varchar,
         created_at -> Timestamp,
         updated_at -> Timestamp,
     }
@@ -11,7 +11,7 @@ table! {
     entries (id) {
         id -> Int4,
         entry_id -> Text,
-        category_id -> Int4,
+        category_id -> Text,
         title -> Varchar,
         body -> Text,
         created_at -> Timestamp,
