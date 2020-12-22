@@ -5,7 +5,7 @@ use diesel::associations::*;
 use diesel::prelude::*;
 use chrono::NaiveDateTime;
 
-#[derive(Queryable, Associations)]
+#[derive(Queryable, Associations, Identifiable)]
 #[belongs_to(Category)]
 #[table_name="entries"]
 pub struct Entry {
@@ -56,12 +56,11 @@ fn with_title(title: &str) -> WithTitle {
 }
 
 impl Entry {
-    fn all() -> All {
-        entries::table
-            .select(ALL_COLUMNS)
+    pub fn all() -> All {
+        entries::table.select(ALL_COLUMNS)
     }
 
-    fn by_title(title: &str) -> ByTitle {
+    pub fn by_title(title: &str) -> ByTitle {
         Self::all().filter(with_title(title))
     }
 }

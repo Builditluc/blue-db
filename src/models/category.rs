@@ -13,8 +13,8 @@ pub struct Category {
 #[derive(Insertable)]
 #[table_name="categories"]
 pub struct NewCategory<'a> {
-    pub id: &'a String,
-    pub title: &'a String,
+    pub id: &'a str,
+    pub title: &'a str,
 
     pub created_at: &'a NaiveDateTime,
     pub updated_at: &'a NaiveDateTime

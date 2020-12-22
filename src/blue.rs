@@ -4,10 +4,7 @@ use crate::models::entry::NewEntry;
 use crate::models::category::Category;
 use crate::models::category::NewCategory;
 
-use crate::schema::entries;
-
 use diesel::prelude::*;
-use diesel::dsl::*;
 use diesel::pg::Pg;
 
 use chrono::Utc;
@@ -38,7 +35,7 @@ impl Blue {
 }
 
 impl Blue {
-    pub fn create_entry<'a>(&self,  title: &'a str, body: &'a str, category_id: &'a str) -> Entry {
+    pub fn create_entry<'a>(&self, title: &'a str, body: &'a str, category_id: &'a str) -> Entry {
         use crate::schema::entries;
 
         let new_entry = NewEntry {
@@ -57,16 +54,35 @@ impl Blue {
 
     }
 
-    pub fn delete_entry(&self, ) -> usize {
-        1
+    pub fn delete_entry(&self, entry_id: &str) -> usize {
+        use crate::schema::entries;
+
+        diesel::delete(entries::table.filter(entries::entry_id.eq(entry_id)))
+            .execute(&self.conn)
+            .expect("Error deleting an existing entry")
     }
 
-    /*
-    fn create_category() -> Category {
+    pub fn create_category<'a>(&self, title: &'a str) -> Category {
+        use crate::schema::categories;
 
+        let new_category = NewCategory {
+            id: &Uuid::new_v4().to_string(),
+            title,
+            created_at: &Utc::now().naive_utc(),
+            updated_at: &Utc::now().naive_utc()
+        };
+
+        diesel::insert_into(categories::table)
+            .values(&new_category)
+            .get_result(&self.conn)
+            .expect("Error saving a new category")
     }
 
-    fn delete_category() -> usize {
+    pub fn delete_category(&self, category_id: &str) -> usize {
+        use crate::schema::categories;
 
-    }*/
+        diesel::delete(categories::table.filter(categories::id.eq(category_id)))
+            .execute(&self.conn)
+            .expect("Error deleting an existing category")
+    }
 }
