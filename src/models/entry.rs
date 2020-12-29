@@ -1,7 +1,6 @@
 use crate::models::category::Category;
 use crate::schema::entries;
 
-use diesel::associations::*;
 use diesel::prelude::*;
 use chrono::NaiveDateTime;
 

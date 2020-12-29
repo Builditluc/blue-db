@@ -1,6 +1,4 @@
-extern crate blue_db;
-
-use blue_db::blue::Blue;
+use blue_db::Blue;
 
 fn main() {
     let blue = Blue::new();

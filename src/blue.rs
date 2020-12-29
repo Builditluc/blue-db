@@ -5,7 +5,6 @@ use crate::models::category::Category;
 use crate::models::category::NewCategory;
 
 use diesel::prelude::*;
-use diesel::pg::Pg;
 
 use chrono::Utc;
 use uuid::Uuid;
