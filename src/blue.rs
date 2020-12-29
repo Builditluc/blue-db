@@ -39,7 +39,7 @@ impl Blue {
         use crate::schema::entries;
 
         let new_entry = NewEntry {
-            entry_id: &Uuid::new_v4().to_string(),
+            id: &Uuid::new_v4().to_string(),
             category_id,
             title,
             body,
@@ -57,7 +57,7 @@ impl Blue {
     pub fn delete_entry(&self, entry_id: &str) -> usize {
         use crate::schema::entries;
 
-        diesel::delete(entries::table.filter(entries::entry_id.eq(entry_id)))
+        diesel::delete(entries::table.filter(entries::id.eq(entry_id)))
             .execute(&self.conn)
             .expect("Error deleting an existing entry")
     }
@@ -84,5 +84,41 @@ impl Blue {
         diesel::delete(categories::table.filter(categories::id.eq(category_id)))
             .execute(&self.conn)
             .expect("Error deleting an existing category")
+    }
+}
+
+impl Blue {
+    pub fn get_entries(&self) -> Vec<Entry> {
+        Entry::all()
+            .load::<Entry>(&self.conn)
+            .expect("Error selecting an entry")
+    }
+    pub fn get_entry_by_title(&self, title: &str) -> Vec<Entry> {
+        Entry::by_title(title)
+            .load::<Entry>(&self.conn)
+            .expect("Error selecting an entry")
+    }
+    pub fn get_entry_by_id(&self, entry_id: &str) -> Entry {
+        Entry::by_id(entry_id)
+            .first::<Entry>(&self.conn)
+            .expect("Error selecting an entry")
+    }
+}
+
+impl Blue {
+    pub fn get_categories(&self) -> Vec<Category> {
+        Category::all()
+            .load::<Category>(&self.conn)
+            .expect("Error selecting an category")
+    }
+    pub fn get_category_by_title(&self, title: &str) -> Vec<Category> {
+        Category::by_title(title)
+            .load::<Category>(&self.conn)
+            .expect("Error selecting an category")
+    }
+    pub fn get_category_by_id(&self, id: &str) -> Category {
+        Category::by_id(id)
+            .first::<Category>(&self.conn)
+            .expect("Error selecting an category")
     }
 }

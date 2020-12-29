@@ -9,8 +9,7 @@ table! {
 
 table! {
     entries (id) {
-        id -> Int4,
-        entry_id -> Text,
+        id -> Text,
         category_id -> Text,
         title -> Varchar,
         body -> Text,

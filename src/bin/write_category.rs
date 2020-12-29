@@ -1,11 +1,16 @@
 extern crate blue_db;
-extern crate diesel;
 
 use blue_db::blue::Blue;
+use std::io::stdin;
 
 fn main() {
     let blue = Blue::new();
 
-    let result = blue.create_category(&"Tests");
-    println!("The newly created category has the id: {}", result.id);
+    println!("Please enter your title for the new category");
+    let mut title = String::new();
+    stdin().read_line(&mut title).unwrap();
+    let title = &title[..(title.len() - 1)];
+
+    let category = blue.create_category(title);
+    println!("Saved the category with id {}", category.id);
 }

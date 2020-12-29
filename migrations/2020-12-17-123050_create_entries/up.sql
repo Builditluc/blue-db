@@ -1,7 +1,6 @@
 CREATE TABLE entries
 (
-    id          SERIAL    NOT NULL PRIMARY KEY,
-    entry_id    TEXT      NOT NULL,
+    id          TEXT      NOT NULL PRIMARY KEY,
     category_id TEXT      NOT NULL,
     title       VARCHAR   NOT NULL,
     body        TEXT      NOT NULL,
