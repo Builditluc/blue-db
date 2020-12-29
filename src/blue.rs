@@ -103,6 +103,11 @@ impl Blue {
             .first::<Entry>(&self.conn)
             .expect("Error selecting an entry")
     }
+    pub fn get_entries_by_category(&self, category_id: &str) -> Vec<Entry> {
+        Entry::belonging_to(&self.get_category_by_id(category_id))
+            .load::<Entry>(&self.conn)
+            .expect("Error selecting an entry")
+    }
 }
 
 impl Blue {
@@ -120,5 +125,35 @@ impl Blue {
         Category::by_id(id)
             .first::<Category>(&self.conn)
             .expect("Error selecting an category")
+    }
+    pub fn get_category_by_entry(&self, entry: &Entry) -> Category {
+        self.get_category_by_id(&entry.category_id)
+    }
+}
+
+impl Blue {
+    pub fn update_entry(&self, entry: &Entry) -> Entry {
+        use crate::schema::entries;
+
+        diesel::update(&self.get_entry_by_id(&entry.id))
+            .set((
+                entries::title.eq(&entry.title),
+                entries::body.eq(&entry.body),
+                entries::updated_at.eq(&Utc::now().naive_utc())
+                ))
+            .get_result(&self.conn)
+            .expect("Error updating an entry")
+    }
+
+    pub fn update_category(&self, category: &Category) -> Category {
+        use crate::schema::categories;
+
+        diesel::update(&self.get_category_by_id(&category.id))
+            .set((
+                categories::title.eq(&category.title),
+                categories::updated_at.eq(&Utc::now().naive_utc())
+                ))
+            .get_result(&self.conn)
+            .expect("Error updating an category")
     }
 }

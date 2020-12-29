@@ -3,7 +3,8 @@ use chrono::NaiveDateTime;
 
 use diesel::prelude::*;
 
-#[derive(Queryable)]
+#[derive(Queryable, Identifiable)]
+#[table_name="categories"]
 pub struct Category {
     pub id: String,
     pub title: String,

@@ -1,3 +1,5 @@
+extern crate blue_db;
+
 #[cfg(test)]
 mod tests {
     #[test]
